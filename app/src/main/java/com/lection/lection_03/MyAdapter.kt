@@ -2,17 +2,16 @@ package com.lection.lection_03
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class MyAdapter : RecyclerView.Adapter<MyViewHolder>() {
 
-    private val items = ArrayList<Int>()
+    val items = ArrayList<Int>()
+    val deletedItems = ArrayList<Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        Log.d("ADD", "onCreateViewHolder")
         return MyViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_view, parent, false)
         )
@@ -24,6 +23,7 @@ class MyAdapter : RecyclerView.Adapter<MyViewHolder>() {
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = items[position]
+
         holder.bind(item)
 
         if (item % 2 == 0) {
@@ -32,7 +32,20 @@ class MyAdapter : RecyclerView.Adapter<MyViewHolder>() {
             holder.setBackgroundColor(Color.BLUE)
         }
 
-        Log.d("ADD", "onBindViewHolder")
+        holder.itemView.setOnClickListener {
+            removeItem(position)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun addItems(newItem: Int) {
+        if (deletedItems.isNotEmpty()) {
+            val restoredItem = deletedItems.removeAt(0)
+            items.add(restoredItem)
+        } else {
+            items.add(newItem)
+        }
+        notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -42,9 +55,9 @@ class MyAdapter : RecyclerView.Adapter<MyViewHolder>() {
         notifyDataSetChanged()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun addItems(item: Int) {
-        items.add(item)
-        notifyDataSetChanged()
+    private fun removeItem(position: Int) {
+        val removedItem = items.removeAt(position)
+        deletedItems.add(removedItem)
+        notifyItemRemoved(position)
     }
 }

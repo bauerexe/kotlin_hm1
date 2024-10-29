@@ -1,7 +1,6 @@
 package com.lection.lection_03
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -23,7 +22,6 @@ class MyActivity : AppCompatActivity() {
 
         fab.setOnClickListener {
             adapter.addItems(adapter.itemCount + 1)
-            Log.d("ADD", "${adapter.itemCount + 1}")
         }
 
         if (savedInstanceState == null) {
@@ -33,13 +31,17 @@ class MyActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("count", adapter.itemCount)
-        Log.d("Save", "onSaveInstanceState")
+        outState.putIntegerArrayList("items", ArrayList(adapter.items))
+        outState.putIntegerArrayList("deletedItems", ArrayList(adapter.deletedItems))
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        adapter.setItems(1 .. savedInstanceState.getInt("count"))
-        Log.d("Restore", "onSaveInstanceState")
+        adapter.items.clear()
+        adapter.items.addAll(savedInstanceState.getIntegerArrayList("items") ?: arrayListOf())
+        adapter.deletedItems.clear()
+        adapter.deletedItems.addAll(
+            savedInstanceState.getIntegerArrayList("deletedItems") ?: arrayListOf()
+        )
     }
 }
