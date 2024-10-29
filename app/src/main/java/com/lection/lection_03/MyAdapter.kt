@@ -56,8 +56,11 @@ class MyAdapter : RecyclerView.Adapter<MyViewHolder>() {
     }
 
     private fun removeItem(position: Int) {
-        val removedItem = items.removeAt(position)
-        deletedItems.add(removedItem)
-        notifyItemRemoved(position)
+        if (position in items.indices) {
+            val removedItem = items.removeAt(position)
+            deletedItems.add(removedItem)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, items.size - position)
+        }
     }
 }
